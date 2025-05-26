@@ -1,21 +1,23 @@
 import { createContext, useContext, useState } from "react";
+import { cardValue } from "../functions";
 
-const playerContext = createContext<ContextProps | null>(null);
+const arrayCardContext = createContext<ContextProps | null>(null);
 
 type ContextProps = {
-    user: null | number,
-    setUser: React.Dispatch<React.SetStateAction<null | number>>
+    arrayCard: number[],
+    setArrayCard: React.Dispatch<React.SetStateAction<number[]>>
 }
 
-export const PlayerContextProvider = ({children}:{children:React.ReactNode})=> {
-    const [user, setUser]=useState<null | number>(null);
-    return <playerContext.Provider value={{user, setUser}}>{children}</playerContext.Provider>
+export const ArrayCardContextProvider = ({children}:{children:React.ReactNode})=> {
+    const [arrayCard, setArrayCard]=useState(Array.from({length:10}).map(()=>cardValue()))
+    
+    return <arrayCardContext.Provider value={{arrayCard, setArrayCard}}>{children}</arrayCardContext.Provider>
 }
 
-const usePlayerContext = () => {
-    const playerC = useContext(playerContext);
-    if (!playerC) throw new Error ('to use playerContext use PlayerContextProvider')
-    return ( playerC );
+const useArrayCardContext = () => {
+    const arrayCardC = useContext(arrayCardContext);
+    if (!arrayCardC) throw new Error ('To use arrayCardContext use ArrayCardContextProvider.')
+    return ( arrayCardC );
 }
  
-export default usePlayerContext;
+export default useArrayCardContext;
