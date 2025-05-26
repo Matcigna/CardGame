@@ -3,9 +3,19 @@ import CardMedia from '@mui/material/CardMedia';
 import useArrayCardContext from "../contexts/PlayerContext";
 import { useState } from "react";
 
-const PlayCard = ({ cardValue, index }: { cardValue: number, index: number }) => {
+type PropsPlayCard = {
+    cardValue: number, 
+    index: number,
+    cardSelected: number | null,
+    setCardSelected:React.Dispatch<React.SetStateAction<number | null>>
+}
+const PlayCard = ({ cardValue, index,cardSelected, setCardSelected }: PropsPlayCard) => {
     const [isDragOver, setIsDragOver] = useState(false);
     const { arrayCard, setArrayCard } = useArrayCardContext();
+
+    const handleClick = ()=>{
+        setCardSelected(index);
+    }
 
     const dragStart = (e: React.DragEvent<HTMLElement>) => {
         e.dataTransfer.setData("text/plain", String(e.currentTarget.dataset.index))
@@ -31,6 +41,7 @@ const PlayCard = ({ cardValue, index }: { cardValue: number, index: number }) =>
 
         setArrayCard(newArray);
         setArrayCard(newArray);
+        setCardSelected(newIndex);
         setIsDragOver(false);
     }
 
@@ -49,10 +60,11 @@ const PlayCard = ({ cardValue, index }: { cardValue: number, index: number }) =>
             onDragStart={(e) => dragStart(e)}
             onDrop={(e) => drop(e)}
             onDragOver={(e) => dragOver(e)}
+            onClick={handleClick}
             data-index={index}
             sx={{
                 borderRadius: '15px',
-                border: isDragOver ? '1px solid blue' : '1px solid black',
+                border: isDragOver ? '1px solid blue' : cardSelected===index ? '1px solid red' : '1px solid black',
             }}
         >
             <CardMedia
