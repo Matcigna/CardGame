@@ -9,7 +9,7 @@ type ContextProps = {
 }
 
 export const ArrayCardContextProvider = ({children}:{children:React.ReactNode})=> {
-    const [arrayCard, setArrayCard]=useState(Array.from({length:10}).map(()=>cardValue()))
+    const [arrayCard, setArrayCard]=useState(Array.from({length:12}).map(()=>cardValue()))
     
     return <arrayCardContext.Provider value={{arrayCard, setArrayCard}}>{children}</arrayCardContext.Provider>
 }

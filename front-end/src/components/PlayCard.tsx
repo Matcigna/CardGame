@@ -72,6 +72,11 @@ const PlayCard = ({ cardValue, index,cardSelected, setCardSelected }: PropsPlayC
                 component="img"
                 image={`${cardValue}.svg`}
                 alt={`${cardValue}`}
+                style={{ 
+                    width: "100%", 
+                    height: "100%", 
+                    objectFit: "cover",
+                 }}
             />
         </Card>
     );

@@ -1,35 +1,37 @@
-import { Grid } from "@mui/material";
+import Grid from "@mui/material/Grid";
 import PlayCard from "./PlayCard";
 import useArrayCardContext from "../contexts/PlayerContext";
 import { useEffect, useState } from "react";
+import { sizeElement, arrayKey } from "../parameter";
+import Box from "@mui/material/Box";
 
 const CardGrid = () => {
     const { arrayCard, setArrayCard } = useArrayCardContext();
-    const [cardSelected, setCardSelected] = useState<null | number>(null)
+    const [cardSelected, setCardSelected] = useState<null | number>(null);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
-            console.log(e.key);
-            if (cardSelected !== null && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
-                if (e.key === "ArrowLeft" && cardSelected > 0) {
-                    setArrayCard(prev => {
-                        const newArray = [...prev];
-                        const [movedCard] = newArray.splice(cardSelected, 1);
-                        newArray.splice(cardSelected - 1, 0, movedCard);
-                        return newArray;
-                    });
-                    setCardSelected(prev => (typeof prev === "number" ? prev - 1 : prev));
-                }
+            if (cardSelected === null || !arrayKey.includes(e.key)) return;
     
-                if (e.key === "ArrowRight" && cardSelected < arrayCard.length - 1) {
-                    setArrayCard(prev => {
-                        const newArray = [...prev];
-                        const [movedCard] = newArray.splice(cardSelected, 1);
-                        newArray.splice(cardSelected + 1, 0, movedCard);
-                        return newArray;
-                    });
-                    setCardSelected(prev => (typeof prev === "number" ? prev + 1 : prev));
-                }
+            const offset = Math.floor(12 / sizeElement);
+            let newIndex = cardSelected;
+    
+            if (e.key === "ArrowLeft" && cardSelected > 0) {
+                newIndex = cardSelected - 1;
+            } else if (e.key === "ArrowRight" && cardSelected < arrayCard.length - 1) {
+                newIndex = cardSelected + 1;
+            } else if (e.key === "ArrowUp" && cardSelected >= offset) {
+                newIndex = cardSelected - offset;
+            } else if (e.key === "ArrowDown" && cardSelected + offset < arrayCard.length) {
+                newIndex = cardSelected + offset;
+            }
+    
+            if (newIndex !== cardSelected) {
+                const newArray = [...arrayCard];
+                const [movedCard] = newArray.splice(cardSelected, 1);
+                newArray.splice(newIndex, 0, movedCard);
+                setArrayCard(newArray);
+                setCardSelected(newIndex);
             }
         };
     
@@ -37,26 +39,30 @@ const CardGrid = () => {
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [cardSelected, arrayCard.length]);    
+    }, [cardSelected, arrayCard, setArrayCard]);
 
     return (
-        <Grid container spacing={2}>
-            {arrayCard && arrayCard.map((item, i) => (
-                <Grid key={i}>
-                    <PlayCard
-                        cardValue={item}
-                        index={i}
-                        cardSelected={cardSelected}
-                        setCardSelected={setCardSelected}
-                    />
-                </Grid>
-            )
-            )
-            }
-
+        <Box sx={{
+            height:"100vh", 
+            width:'100vw', 
+            display:"flex",
+            justifyContent:"center"
+            }}>
+        <Grid container spacing={2} sx={{ width: "35vw"}}>
+            {arrayCard &&
+                arrayCard.map((item, i) => (
+                    <Grid key={i} size={sizeElement}>
+                        <PlayCard
+                            cardValue={item}
+                            index={i}
+                            cardSelected={cardSelected}
+                            setCardSelected={setCardSelected}
+                        />
+                    </Grid>
+                ))}
         </Grid>
+        </Box>
     );
-}
+};
 
 export default CardGrid;
-
